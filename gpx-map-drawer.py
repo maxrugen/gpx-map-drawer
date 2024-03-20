@@ -13,17 +13,25 @@ def plot_route(gpx_file):
     lats = [point.latitude for point in route]
     lons = [point.longitude for point in route]
 
+    # Calculate latitude and longitude ranges
+    lat_range = max(lats) - min(lats)
+    lon_range = max(lons) - min(lons)
+
+    # Set figure size based on longer dimension
+    if lat_range > lon_range:
+        fig_width = 8
+        fig_height = 8 * (lat_range / lon_range)
+    else:
+        fig_width = 8 * (lon_range / lat_range)
+        fig_height = 8
+
     # Plot the route
-    # Set figure size
-    plt.figure(figsize=(8, 6))
-    # Set color and line width
-    plt.plot(lons, lats, color='#fc5266', linewidth=10)
+    plt.figure(figsize=(fig_width, fig_height))  # Set figure size
+    plt.plot(lons, lats, color='#fc5266', linewidth=15)  # Set color and line width
 
     # Customize appearance
-    # Turn off axis
-    plt.axis('off')
-    # Set background color
-    plt.gca().set_facecolor('#f5f5f5')
+    plt.axis('off')  # Turn off axis
+    plt.gca().set_facecolor('#f5f5f5')  # Set background color
 
     # Get the filename without extension
     filename = os.path.splitext(gpx_file)[0]
