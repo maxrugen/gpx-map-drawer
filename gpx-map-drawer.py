@@ -1,6 +1,7 @@
 import gpxpy
 import matplotlib.pyplot as plt
 import os
+import shlex
 
 # Function to plot route from GPX file
 def plot_route(gpx_file):
@@ -27,7 +28,7 @@ def plot_route(gpx_file):
 
     # Plot the route
     plt.figure(figsize=(fig_width, fig_height))  # Set figure size
-    plt.plot(lons, lats, color='#fc5266', linewidth=15)  # Set color and line width
+    plt.plot(lons, lats, color='#fc5266', linewidth=10)  # Set color and line width
 
     # Customize appearance
     plt.axis('off')  # Turn off axis
@@ -45,6 +46,12 @@ def plot_route(gpx_file):
 
 # Ask user for input GPX file
 input_file = input("Enter the full path to the GPX file: ")
+
+# Split the input string into a list of arguments
+input_file_args = shlex.split(input_file)
+
+# Join the arguments back into a single string with spaces in the filename
+input_file = " ".join(input_file_args)
 
 # Check if the file exists
 if os.path.isfile(input_file):
