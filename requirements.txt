@@ -1,0 +1,2 @@
+gpxpy==1.6.2
+matplotlib==3.8.3
