@@ -17,7 +17,7 @@ def plot_route(gpx_file):
     # Set figure size
     plt.figure(figsize=(8, 6))
     # Set color and line width
-    plt.plot(lons, lats, color='#fc5266', linewidth=15)
+    plt.plot(lons, lats, color='#fc5266', linewidth=10)
 
     # Customize appearance
     # Turn off axis
