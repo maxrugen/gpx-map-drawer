@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# pytest
+.pytest_cache/
+
+# Generated output
+*.png
+*.svg
