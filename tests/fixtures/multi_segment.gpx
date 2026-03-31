@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="test"
+     xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Track 1</name>
+    <trkseg>
+      <trkpt lat="48.8566" lon="2.3522"></trkpt>
+      <trkpt lat="48.8580" lon="2.3540"></trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="48.8600" lon="2.3560"></trkpt>
+      <trkpt lat="48.8620" lon="2.3580"></trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <name>Track 2</name>
+    <trkseg>
+      <trkpt lat="48.8700" lon="2.3700"></trkpt>
+      <trkpt lat="48.8720" lon="2.3720"></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

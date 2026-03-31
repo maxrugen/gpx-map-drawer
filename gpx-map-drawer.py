@@ -26,8 +26,14 @@ def plot_route(gpx_file, output_file=None, color='#ffffff', linewidth=10, dpi=35
                 lats.append(point.latitude)
                 lons.append(point.longitude)
 
+    # Also extract data from <rte> elements
+    for route in gpx.routes:
+        for point in route.points:
+            lats.append(point.latitude)
+            lons.append(point.longitude)
+
     if not lats:
-        raise ValueError("No track points found in the GPX file.")
+        raise ValueError("No track or route points found in the GPX file.")
 
     # Apply longitude correction factor for equal-area approximation
     mean_lat = math.radians(sum(lats) / len(lats))
@@ -48,7 +54,7 @@ def plot_route(gpx_file, output_file=None, color='#ffffff', linewidth=10, dpi=35
         fig_width = 8 * (lon_range / lat_range)
         fig_height = 8
 
-    # Plot the route, connecting each track/segment
+    # Plot the route, connecting each track/segment and route
     plt.figure(figsize=(fig_width, fig_height))  # Set figure size
 
     for track in gpx.tracks:
@@ -56,6 +62,11 @@ def plot_route(gpx_file, output_file=None, color='#ffffff', linewidth=10, dpi=35
             seg_lats = [p.latitude for p in segment.points]
             seg_lons = [lon * math.cos(mean_lat) for lon in (p.longitude for p in segment.points)]
             plt.plot(seg_lons, seg_lats, color=color, linewidth=linewidth)
+
+    for route in gpx.routes:
+        rte_lats = [p.latitude for p in route.points]
+        rte_lons = [lon * math.cos(mean_lat) for lon in (p.longitude for p in route.points)]
+        plt.plot(rte_lons, rte_lats, color=color, linewidth=linewidth)
 
     # Customize appearance
     plt.axis('off')  # Turn off axis
@@ -104,13 +115,39 @@ def interactive_mode():
             print(f"Invalid hex color '{color_input}', using default #ffffff.")
         color = '#ffffff'
 
-    process_file(input_file, color=color)
+    # Ask for linewidth
+    linewidth_input = input("Enter the route line width (default: 10): ").strip()
+    try:
+        linewidth = float(linewidth_input) if linewidth_input else 10
+    except ValueError:
+        print(f"Invalid linewidth '{linewidth_input}', using default 10.")
+        linewidth = 10
+
+    # Ask for DPI
+    dpi_input = input("Enter the output DPI (default: 350): ").strip()
+    try:
+        dpi = int(dpi_input) if dpi_input else 350
+    except ValueError:
+        print(f"Invalid DPI '{dpi_input}', using default 350.")
+        dpi = 350
+
+    # Ask for format
+    fmt_input = input("Enter the output format, png or svg (default: png): ").strip().lower()
+    if fmt_input in ('png', 'svg'):
+        fmt = fmt_input
+    else:
+        if fmt_input:
+            print(f"Invalid format '{fmt_input}', using default png.")
+        fmt = 'png'
+
+    process_file(input_file, color=color, linewidth=linewidth, dpi=dpi, fmt=fmt)
 
 
 def main():
     parser = argparse.ArgumentParser(description="Generate a minimalist map image from a GPX file.")
     parser.add_argument('--input', '-i', type=str, help="Path to the input GPX file or a directory of GPX files.")
     parser.add_argument('--output', '-o', type=str, help="Path to the output image file (default: same as input with .png extension). Ignored in batch mode.")
+    parser.add_argument('--output-dir', type=str, help="Directory to write output files to (batch mode only).")
     parser.add_argument('--color', '-c', type=str, default='#ffffff', help="Hex color code for the route line (default: #ffffff).")
     parser.add_argument('--linewidth', '-l', type=float, default=10, help="Width of the route line (default: 10).")
     parser.add_argument('--dpi', '-d', type=int, default=350, help="DPI of the output image (default: 350).")
@@ -127,14 +164,32 @@ def main():
         print(f"Error: Invalid hex color '{args.color}'.")
         return
 
+    # Warn if --output extension doesn't match --format
+    if args.output:
+        ext = os.path.splitext(args.output)[1].lstrip('.').lower()
+        if ext and ext != args.format:
+            print(f"Warning: Output file extension '.{ext}' does not match format '{args.format}'. Changing format to '{ext}'.")
+            args.format = ext if ext in ('png', 'svg') else args.format
+
     # Batch mode: if input is a directory, process all GPX files in it
     if os.path.isdir(args.input):
         gpx_files = sorted(glob.glob(os.path.join(args.input, '*.gpx')))
         if not gpx_files:
             print("Error: No GPX files found in the directory.")
             return
-        for gpx_file in gpx_files:
-            process_file(gpx_file, color=args.color, linewidth=args.linewidth, dpi=args.dpi, fmt=args.format)
+
+        # Create output directory if specified
+        if args.output_dir:
+            os.makedirs(args.output_dir, exist_ok=True)
+
+        total = len(gpx_files)
+        for idx, gpx_file in enumerate(gpx_files, 1):
+            basename = os.path.splitext(os.path.basename(gpx_file))[0]
+            print(f"[{idx}/{total}] Processing {os.path.basename(gpx_file)}...")
+            out = None
+            if args.output_dir:
+                out = os.path.join(args.output_dir, f"{basename}.{args.format}")
+            process_file(gpx_file, output_file=out, color=args.color, linewidth=args.linewidth, dpi=args.dpi, fmt=args.format)
         return
 
     process_file(args.input, output_file=args.output, color=args.color, linewidth=args.linewidth, dpi=args.dpi, fmt=args.format)

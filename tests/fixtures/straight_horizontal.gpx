@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="test"
+     xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Straight Line</name>
+    <trkseg>
+      <trkpt lat="40.0000" lon="10.0000"></trkpt>
+      <trkpt lat="40.0000" lon="10.0010"></trkpt>
+      <trkpt lat="40.0000" lon="10.0020"></trkpt>
+    </trkseg>
+  </trk>
+</gpx>
