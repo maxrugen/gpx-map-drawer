@@ -1,8 +1,10 @@
 # GPX Map Drawer
 
-This script generates a minimalist map image from a GPX file containing route data of a cycling or running track.
+This script generates a minimalist map image from a GPX file containing route data of a cycling or running track. It supports multi-track/multi-segment GPX files, batch processing, and outputs in PNG or SVG format.
 
 ## Usage
+
+### Interactive Mode
 
 1. Make sure you have Python installed on your system.
 
@@ -12,25 +14,54 @@ This script generates a minimalist map image from a GPX file containing route da
     pip3 install -r requirements.txt
     ```
 
-3. Run the script `gpx-map-drawer.py`:
+3. Run the script without arguments to enter interactive mode:
 
     ```
     python3 gpx-map-drawer.py
     ```
 
-4. Follow the prompts to enter the full path to the GPX file you want to use.
+4. Follow the prompts to enter the full path to the GPX file and a route color.
 
 5. The script will generate a PNG map image based on the GPX data, with the same filename as the input GPX file.
 
-## Customization
+### CLI Mode
 
-You can customize the appearance of the map by modifying the following values directly in the `gpx-map-drawer.py` script:
+You can also use command-line arguments to skip the interactive prompts:
 
-- **Line Width:** Modify the `linewidth` parameter in the `plot_route` function to adjust the thickness of the route line.
-  
-- **Line Color:** Modify the `color` parameter in the `plt.plot` function to change the color of the route line. You can use hexadecimal color codes or named colors.
+```
+python3 gpx-map-drawer.py --input route.gpx
+```
 
-- **Background Color:** Modify the `set_facecolor` function to change the background color of the map. You can use hexadecimal color codes or named colors.
+#### Available Options
+
+| Flag | Short | Description | Default |
+|------|-------|-------------|---------|
+| `--input` | `-i` | Path to a GPX file or a directory of GPX files | *(interactive prompt)* |
+| `--output` | `-o` | Output image file path (ignored in batch mode) | Same as input with `.png` extension |
+| `--color` | `-c` | Hex color code for the route line | `#ffffff` |
+| `--linewidth` | `-l` | Width of the route line | `10` |
+| `--dpi` | `-d` | DPI of the output image | `350` |
+| `--format` | `-f` | Output format: `png` or `svg` | `png` |
+
+#### Examples
+
+Generate a PNG with a custom color:
+
+```
+python3 gpx-map-drawer.py -i route.gpx -c "#fc5266"
+```
+
+Generate an SVG:
+
+```
+python3 gpx-map-drawer.py -i route.gpx -f svg
+```
+
+Batch process all GPX files in a directory:
+
+```
+python3 gpx-map-drawer.py -i ./gpx-files/
+```
 
 ## Required Libraries
 
