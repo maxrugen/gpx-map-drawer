@@ -28,18 +28,18 @@ def plot_route(gpx_file):
 
     # Plot the route
     plt.figure(figsize=(fig_width, fig_height))  # Set figure size
-    plt.plot(lons, lats, color='#fc5266', linewidth=10)  # Set color and line width
+    plt.plot(lons, lats, color='#ffffff', linewidth=10)  # Set color and line width
 
     # Customize appearance
     plt.axis('off')  # Turn off axis
-    plt.gca().set_facecolor('#f5f5f5')  # Set background color
+    plt.gca().set_facecolor('none')  # Set background color to transparent
 
     # Get the filename without extension
     filename = os.path.splitext(gpx_file)[0]
 
     # Save the image with the same filename as the GPX file
     output_file = f"{filename}.png"
-    plt.savefig(output_file, bbox_inches='tight', pad_inches=0, dpi=350)
+    plt.savefig(output_file, bbox_inches='tight', pad_inches=0, dpi=350, transparent=True)
 
     # Return the output filename
     return output_file
@@ -55,8 +55,13 @@ input_file = " ".join(input_file_args)
 
 # Check if the file exists
 if os.path.isfile(input_file):
-    # Plot the route and get the output filename
-    output_file = plot_route(input_file)
-    print("Map image generated successfully and saved as " + output_file + "!")
+    if not input_file.lower().endswith('.gpx'):
+        print("Error: The file is not a GPX file. Please provide a file with a .gpx extension.")
+    else:
+        try:
+            output_file = plot_route(input_file)
+            print("Map image generated successfully and saved as " + output_file + "!")
+        except Exception as e:
+            print(f"Error: Failed to parse the GPX file. Please ensure it is a valid GPX file.\n{e}")
 else:
     print("Error: Input file not found.")
